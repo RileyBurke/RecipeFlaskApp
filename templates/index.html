@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Riley's Recipes</title>
+</head>
+<body>
+    <h1>Welcome to Riley's Recipe Page</h1>
+    <h2>Select a category or log in and upload your own recipes for others to view.</h2>
+    <a href="{{ url_for('recipe_list', category='Main Courses') }}">Main Courses</a>
+    <a href="{{ url_for('recipe_list', category='Appetizers') }}">Appetizers</a>
+    <a href="{{ url_for('recipe_list', category='Salads') }}">Salads</a>
+    <a href="{{ url_for('recipe_list', category='Desserts') }}">Desserts</a>
+    <a href="{{ url_for('login') }}">Log In</a>
+    <a href="{{ url_for('signup') }}">Sign Up</a>
+</body>
+</html>
