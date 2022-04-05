@@ -14,7 +14,7 @@ def index():
 
 @app.route("/user/<string:username>")
 def profile(username):
-    return render_template("profile.html")
+    return render_template("profile.html", username=username)
 
 
 @app.route("/user/<string:username>/upload")
@@ -42,7 +42,7 @@ def signup():
     return render_template("signup.html")
 
 
-@app.route("/<string:category>")
+@app.route("/category/<string:category>")
 def recipe_list(category):
     file_name = str(category) + ".csv"
     category_exists = os.path.exists(file_name)
@@ -52,6 +52,6 @@ def recipe_list(category):
         return "404"
 
 
-@app.route("/<string:category>/<string:recipe>")
+@app.route("/category/<string:category>/<string:recipe>")
 def view_recipe(category, recipe):
     return render_template("recipe.html", category=category, recipe=recipe)
