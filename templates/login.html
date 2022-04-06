@@ -2,10 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Site Login</title>
+    <title>
+        {% if mode == "login"  %}
+        Log In
+        {% else %}
+        Create Account
+        (% endif %}
+    </title>
 </head>
 <body>
-<h1>Log In</h1>
+<h1>
+    {% if mode == "login"  %}
+        Log In
+        {% else %}
+        Create Account
+        (% endif %}
+</h1>
 <form>
     <label for="username">Username:</label>
     <input type="text" id="username" name="username">
@@ -13,6 +25,7 @@
     <input type ="password" id="password" name="password">
     <label for="password_2">Re-enter password:</label>
     <input type ="password" id="password_2" name="password">
+    <input type="button" id="submit_account" name="submit_account">
 </form>
 </body>
 </html>

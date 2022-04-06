@@ -6,9 +6,19 @@
 </head>
 <body>
 <form>
-    <input type="file" name="recipe_image" id="image_upload">
+    <label for="image_upload">Image file: </label>
+    <input type="file" name="image_upload" id="image_upload">
     <span></span>
-    <input type="submit" name="submit_recipe" id="submit_recipe">
+    <label for="serving_size">Serving size:</label>
+    <input type="text" name="serving_size" id="serving_size">
+    <span></span>
+    <label for="ingredients">Ingredients: </label>
+    <input type="text" name="ingredients" id="ingredients">
+    <span></span>
+    <label for="instructions">Instructions: </label>
+    <input type="text" name="instructions" id="instructions">
+    <span></span>
+    <input type="button" name="submit_recipe" id="submit_recipe">
 </form>
 <script src="../upload_verification.js"></script>
 </body>
