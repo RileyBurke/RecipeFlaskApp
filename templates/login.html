@@ -18,14 +18,18 @@
         Create Account
     {% endif %}
 </h1>
-<form>
+<form action="" method="post">
     <label for="username">Username:</label>
     <input type="text" id="username" name="username">
+    <span></span>
     <label for="password">Password:</label>
     <input type ="password" id="password" name="password">
+    <span></span>
     <label for="password_2">Re-enter password:</label>
     <input type ="password" id="password_2" name="password">
+    <span></span>
     <input type="button" id="submit_account" name="submit_account" value="Submit">
 </form>
+<script src="../static/js/account_verification.js"></script>
 </body>
 </html>

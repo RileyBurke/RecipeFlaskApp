@@ -2,7 +2,9 @@
 
 const $ = selector => document.querySelector(selector);
 
-$("#submit_recipe").addEventListener("click", submitRecipe);
+document.addEventListener("DOMContentLoaded", () => {
+    $("#submit_recipe").addEventListener("click", submitRecipe);
+});
 
 function submitRecipe() {
     const validExtensions = ["jpg", "jpeg", "png", "bmp"];

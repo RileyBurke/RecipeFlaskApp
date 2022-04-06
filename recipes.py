@@ -3,8 +3,10 @@ import csv
 from flask import Flask, render_template, request, redirect, url_for, Response
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user, UserMixin
 import sqlite3
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
+app.config['UPLOAD_PATH'] = 'static/images'
 login_manager = LoginManager()
 recipe_app_database = "recipesRB.db"
 
@@ -64,10 +66,14 @@ def profile(username):
     return render_template("profile.html", username=username)
 
 
-@app.route("/user/<string:username>/upload")
+@app.route("/user/<string:username>/upload", methods=['GET', 'POST'])
 @login_required
 def upload(username):
-    return render_template("upload.html")
+    if request.method == 'POST':
+        image_file = request.files['image_upload']
+        image_file.save(os.path.join(app.config['UPLOAD_PATH'], secure_filename(image_file.filename)))
+    else:
+        return render_template("upload.html")
 
 
 @app.route("/user/<string:username>/remove")
@@ -78,7 +84,13 @@ def remove(username):
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
-    return render_template("login.html", mode="login")
+    if request.method == "POST":
+        username = request.form['username']
+        password = request.form['password']
+        password_reentry = request.form['password_2']
+        # if username + password in a database row and passwords match log in.
+    else:
+        return render_template("login.html", mode="login")
 
 
 @app.route("/logout")
@@ -92,10 +104,11 @@ def signup():
     if request.method == "POST":
         username = request.form['username']
         password = request.form['password']
-        password_reentry = request.form['password2']
-        if 16 >= len(username) > 4 and 20 >= len(password) > 8 and password == password_reentry:
+        password_reentry = request.form['password_2']
+        if 16 >= len(username) >= 8 and 20 >= len(password) > 8 and password == password_reentry:
             create_new_user(username, password)
-    return render_template("login.html", mode="signup")
+    else:
+        return render_template("login.html", mode="signup")
 
 
 @app.route("/category/<string:category>")

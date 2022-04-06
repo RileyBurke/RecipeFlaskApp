@@ -5,7 +5,7 @@
     <title>Title</title>
 </head>
 <body>
-<form>
+<form action="{{ url_for('upload') }}" method="post">
     <label for="image_upload">Image file: </label>
     <input type="file" name="image_upload" id="image_upload">
     <span></span>
@@ -20,6 +20,6 @@
     <span></span>
     <input type="button" name="submit_recipe" id="submit_recipe">
 </form>
-<script src="../upload_verification.js"></script>
+<script src="../static/js/upload_verification.js"></script>
 </body>
 </html>
