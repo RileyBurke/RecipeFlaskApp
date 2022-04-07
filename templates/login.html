@@ -11,6 +11,17 @@
     </title>
 </head>
 <body>
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<ul class=flashes>
+    {% for message in messages %}
+    {{ message }}
+    {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+{% block body %}
+{% endblock %}
 <h1>
     {% if mode == "login" %}
         Log In
@@ -18,16 +29,19 @@
         Create Account
     {% endif %}
 </h1>
-<form action="" method="post">
+<h3>{{ error }}</h3>
+<form id="user_account_form" action="" method="post">
     <label for="username">Username:</label>
     <input type="text" id="username" name="username">
     <span></span>
     <label for="password">Password:</label>
     <input type ="password" id="password" name="password">
     <span></span>
+    {% if mode == "signup" %}
     <label for="password_2">Re-enter password:</label>
-    <input type ="password" id="password_2" name="password">
+    <input type ="password" id="password_2" name="password_2">
     <span></span>
+    {% endif %}
     <input type="button" id="submit_account" name="submit_account" value="Submit">
 </form>
 <script src="../static/js/account_verification.js"></script>
