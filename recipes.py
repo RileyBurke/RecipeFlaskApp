@@ -37,12 +37,19 @@ class User(UserMixin):
     def is_anonymous(self):
         return False
 
+    @property
+    def is_active(self):
+        return True
+
+    def get_id(self):
+        return self._username
+
 
 @login_manager.user_loader
 def load_user(username):
     database_connection = connect_to_database()
     cursor = database_connection.cursor()
-    cursor.execute("SELECT * FROM login WHERE username = (?)", username)
+    cursor.execute("SELECT * FROM users WHERE username = (?)", [username])
     user = cursor.fetchone()
     if user is None:
         return None
@@ -119,14 +126,17 @@ def login():
     if request.method == "POST":
         username = request.form['username']
         password = request.form['password']
-        users = get_users()
-        valid_user = False
-
-        for user in users:
-            if user[0] == username and user[1] == password:
-                valid_user = True
-        if valid_user:
-            pass
+        # users = get_users()
+        # valid_user = False
+        # for user in users:
+        #     if user[0] == username and user[1] == password:
+        #         valid_user = True
+        # if valid_user:
+        #     pass
+        user = load_user(username)
+        if user is not None:
+            login_user(user)
+            return redirect(url_for('index'))
         else:
             flash("Invalid username or password.")
             return redirect(url_for('login'))
@@ -137,7 +147,8 @@ def login():
 @app.route("/logout")
 @login_required
 def logout():
-    return "SIGN OUT"
+    logout_user()
+    return redirect(url_for('index'))
 
 
 @app.route("/signup", methods=['GET', 'POST'])
