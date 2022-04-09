@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="recipesRB" uuid="88b27d58-ae4c-41d7-8759-9fb7a2f08de0">
+    <data-source source="LOCAL" name="users" uuid="35479142-6c45-43cb-9217-cb60c6d6c773">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:C:\Users\riley\Desktop\Python\RecipeFlaskApp\recipesRB.db</jdbc-url>
+      <jdbc-url>jdbc:sqlite:C:\Users\riley\Desktop\Python\RecipeFlaskApp\users.db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
       <libraries>
         <library>
