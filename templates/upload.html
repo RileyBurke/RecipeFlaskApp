@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Upload Recipe</title>
 </head>
 <body>
 <form id="recipe_form" action="{{ url_for('upload', username=username) }}" method="post">
@@ -19,7 +19,7 @@
     </select>
     <span></span>
     <label for="image_upload">Image file: </label>
-    <input type="file" name="image_upload" id="image_upload" >
+    <input type="file" name="image_upload" id="image_upload" accept=".bmp, .png, .jpg, .jpeg">
     <span></span>
     <label for="serving_size">Serving size:</label>
     <input type="text" name="serving_size" id="serving_size">
