@@ -7,8 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function userSubmission() {
-    let validUsername = true;
-    let validPassword = true;
+    let validUsername, validPassword;
 
     if ($("#password").value.length > 20 || $("#password").value.length < 8){
         $("#password").nextElementSibling.textContent = "Passwords must be between 8 and 20 characters long.";

@@ -11,7 +11,12 @@
     <a href="{{ url_for('recipe_list', category='Appetizers') }}">Appetizers</a>
     <a href="{{ url_for('recipe_list', category='Salads') }}">Salads</a>
     <a href="{{ url_for('recipe_list', category='Desserts') }}">Desserts</a>
+    {% if user != null %}
+    <a href="{{ url_for('profile', username = user) }}">{{ user }}</a>
+    <a href="{{ url_for('logout') }}">Log Out</a>
+    {% else %}
     <a href="{{ url_for('login') }}">Log In</a>
     <a href="{{ url_for('signup') }}">Sign Up</a>
+    {% endif %}
 </body>
 </html>

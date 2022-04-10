@@ -5,6 +5,11 @@
     <title>{{ username }}</title>
 </head>
 <body>
-    <h2>{{ username }}'s recipe page.</h2>
+<h2>{{ username }}'s recipe page.</h2>
+{% if my_profile %}
+<a href="{{ url_for('upload', username = username) }}">Upload Recipe</a>
+<a href="{{ url_for('remove', username = username) }}">Delete Recipe</a>
+{% else %}
+{% endif %}
 </body>
 </html>

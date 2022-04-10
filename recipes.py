@@ -3,7 +3,6 @@ import csv
 import sys
 from flask import Flask, render_template, request, redirect, url_for, Response, flash
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user, UserMixin
-import sqlite3
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
@@ -38,34 +37,43 @@ def create_new_user(username, password):
     database.session.commit()
 
 
-def connect_to_database():
-    return sqlite3.connect(recipe_app_database)
-
-
 @app.route("/")
 def index():
-    return render_template("index.html")
+    if current_user.is_authenticated:
+        return render_template("index.html", user=current_user.username)
+    else:
+        return render_template("index.html")
 
 
 @app.route("/user/<string:username>")
 def profile(username):
-    return render_template("profile.html", username=username)
+    if current_user.is_authenticated and current_user.username == username:
+        return render_template("profile.html", username=username, my_profile=True)
+    else:
+        return render_template("profile.html", username=username)
 
 
 @app.route("/user/<string:username>/upload", methods=['GET', 'POST'])
 @login_required
 def upload(username):
-    if request.method == 'POST':
-        image_file = request.files['image_upload']
-        image_file.save(os.path.join(app.config['UPLOAD_PATH'], secure_filename(image_file.filename)))
+    if current_user.is_authenticated and current_user.username == username:
+        if request.method == 'POST':
+            image_file = request.files['image_upload']
+            image_file.save(os.path.join(app.config['UPLOAD_PATH'], secure_filename(image_file.filename)))
+            return redirect(url_for('profile', username=username))
+        else:
+            return render_template("upload.html", username=username)
     else:
-        return render_template("upload.html")
+        return redirect(url_for('profile', username=username))
 
 
 @app.route("/user/<string:username>/remove")
 @login_required
 def remove(username):
-    return render_template("remove.html")
+    if current_user.is_authenticated and current_user.username == username:
+        return render_template("remove.html")
+    else:
+        return redirect(url_for('profile', username=username))
 
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -76,7 +84,7 @@ def login():
         username = request.form['username']
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
-        if user is not None and user.password == password:
+        if user is not None and check_password_hash(user.password, password):
             login_user(user)
             return redirect(url_for('index'))
         else:
@@ -102,7 +110,7 @@ def signup():
         password = request.form['password']
         password_reentry = request.form['password_2']
         if 16 >= len(username) >= 8 and 20 >= len(password) > 8 and password == password_reentry:
-            create_new_user(username, password)
+            create_new_user(username, generate_password_hash(password))
             flash("User successfully created.")
             return redirect(url_for('login'))
         else:
