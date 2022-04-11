@@ -18,12 +18,26 @@ login_manager.init_app(app)
 recipe_app_database = "recipesRB.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 database = SQLAlchemy(app)
+ALLOWED_FILE_EXTENSIONS = {"bmp", "png", "jpg", "jpeg"}
 
 
 class User(database.Model, UserMixin):
     id = database.Column(database.Integer, primary_key=True, autoincrement=True)
     username = database.Column(database.String(200))
     password = database.Column(database.String(200))
+
+
+def load_recipe_file(category):
+    recipes = []
+    with open(category + ".csv") as recipe_file:
+        recipes.append(recipe_file.readline)
+    return recipes
+
+
+def add_recipe_file(category, recipe: list):
+    with open(category + ".csv", "a", newline="") as recipe_file:
+        writer = csv.writer(recipe_file)
+        writer.writerow(recipe)
 
 
 @login_manager.user_loader
@@ -59,8 +73,25 @@ def upload(username):
     if current_user.is_authenticated and current_user.username == username:
         if request.method == 'POST':
             image_file = request.files['image_upload']
-            image_file.save(os.path.join(app.config['UPLOAD_PATH'], secure_filename(image_file.filename)))
-            return redirect(url_for('profile', username=username))
+            name = request.form['recipe_name']
+            category = request.form['recipe_category']
+            serving_size = request.form['serving_size']
+            ingredients = request.form['ingredients']
+            instructions = request.form['instructions']
+            file_extension = image_file.filename.split(".")[-1]
+            if name == "" or category == "" or serving_size == "" or ingredients == "" or instructions == "" \
+                    or image_file.filename == "":
+                flash("All information must be filled.")
+                return render_template("upload.html", username=username)
+            elif file_extension not in ALLOWED_FILE_EXTENSIONS:
+                flash("Image must be a png, jpg, or bmp file.")
+                return render_template("upload.html", username=username)
+            else:
+                image_file.save(os.path.join(app.config['UPLOAD_PATH'], secure_filename(image_file.filename)))
+                recipe = [name, category, serving_size, ingredients, instructions, current_user.username,
+                          image_file.filename]
+                add_recipe_file(category, recipe)
+                return redirect(url_for('profile', username=username))
         else:
             return render_template("upload.html", username=username)
     else:

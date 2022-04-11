@@ -5,11 +5,22 @@
     <title>Upload Recipe</title>
 </head>
 <body>
-<form id="recipe_form" action="{{ url_for('upload', username=username) }}" method="post">
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<ul class=flashes>
+    {% for message in messages %}
+    {{ message }}
+    {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+{% block body %}
+{% endblock %}
+<form id="recipe_form" action="" method="post" enctype=multipart/form-data>
     <label for="recipe_name">Recipe name:</label>
     <input type="text" name="recipe_name" id="recipe_name">
     <span></span>
-    <label for="recipe_category">Choose a car:</label>
+    <label for="recipe_category">Choose a category:</label>
     <select id="recipe_category" name="recipe_category">
         <option>Choose category</option>
         <option value="Appetizers">Appetizer</option>
