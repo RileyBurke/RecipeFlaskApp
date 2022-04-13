@@ -2,9 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>{{ recipe_info[0] }}</title>
 </head>
 <body>
-
+<img src="/static/images/{{ recipe_info[6] }}">
+<h1 id="recipe_name">{{ recipe_info[0] }}</h1>
+<h2 id="recipe_size">Serves {{ recipe_info[2] }}</h2>
+<p id="recipe_ingredients">{{ recipe_info[3] }}</p>
+<p id="recipe_directions">{{ recipe_info[4] }}</p>
+<footer>Recipe created by <a href="{{ url_for('profile', username = recipe_info[5] ) }}">{{ recipe_info[5] }}</a></footer>
 </body>
 </html>

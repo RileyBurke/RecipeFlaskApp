@@ -29,8 +29,10 @@ class User(database.Model, UserMixin):
 
 def load_recipe_file(category):
     recipes = []
-    with open(category + ".csv") as recipe_file:
-        recipes.append(recipe_file.readline)
+    with open(str(category) + ".csv", newline="") as recipe_file:
+        reader = csv.reader(recipe_file)
+        for row in reader:
+            recipes.append(row)
     return recipes
 
 
@@ -155,11 +157,21 @@ def recipe_list(category):
     file_name = str(category) + ".csv"
     category_exists = os.path.exists(file_name)
     if category_exists:
-        return render_template("category.html", category=category)
+        recipes_list = load_recipe_file(category)
+        return render_template("category.html", category=category, recipes_list=recipes_list)
     else:
         return "404"
 
 
 @app.route("/category/<string:category>/<string:recipe>")
 def view_recipe(category, recipe):
-    return render_template("recipe.html", category=category, recipe=recipe)
+    file_name = str(category) + ".csv"
+    category_exists = os.path.exists(file_name)
+    if category_exists:
+        recipes_list = load_recipe_file(category)
+        for load_recipe in recipes_list:
+            if recipe == load_recipe[0]:
+                return render_template("recipe.html", category=category, recipe=recipe, recipe_info=load_recipe)
+    else:
+        return "404"
+
