@@ -194,3 +194,4 @@ def view_recipe(category, recipe):
     else:
         return "404"
 
+# Display recipes on profile + check for recipe to display remove page
