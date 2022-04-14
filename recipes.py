@@ -42,6 +42,14 @@ def add_recipe_file(recipe: list):
         writer.writerow(recipe)
 
 
+def remove_from_file(recipe_to_remove:list):
+    all_recipes = load_recipe_file()
+    with open("recipes.csv", "w", newline="") as recipe_file:
+        writer = csv.writer(recipe_file)
+        for recipe in all_recipes:
+            if recipe != recipe_to_remove:
+                writer.writerow(recipe)
+
 @login_manager.user_loader
 def load_user(id):
     return User.query.get(id)
@@ -100,16 +108,23 @@ def upload(username):
         return redirect(url_for('profile', username=username))
 
 
-@app.route("/user/<string:username>/remove")
+@app.route("/user/<string:username>/remove", methods=['GET', 'POST'])
 @login_required
 def remove(username):
     if current_user.is_authenticated and current_user.username == username:
         all_recipes = load_recipe_file()
-        user_recipes = []
-        for recipe in all_recipes:
-            if recipe[5] == current_user.username:
-                user_recipes.append(recipe)
-        return render_template("remove.html", user_recipes=user_recipes)
+        if request.method == 'POST':
+            recipe_to_remove = request.form['recipe_select']
+            for recipe in all_recipes:
+                if recipe[0] == recipe_to_remove:
+                    remove_from_file(recipe)
+            return redirect(url_for('profile', username=username))
+        else:
+            user_recipes = []
+            for recipe in all_recipes:
+                if recipe[5] == current_user.username:
+                    user_recipes.append(recipe)
+            return render_template("remove.html", user_recipes=user_recipes)
     else:
         return redirect(url_for('profile', username=username))
 
@@ -159,8 +174,6 @@ def signup():
 
 @app.route("/category/<string:category>")
 def recipe_list(category):
-    # file_name = str(category) + ".csv"
-    # category_exists = os.path.exists(file_name)
     all_recipes = load_recipe_file()
     recipes_in_category = []
     for recipe in all_recipes:
@@ -170,15 +183,10 @@ def recipe_list(category):
         return "404"
     else:
         return render_template("category.html", category=category, recipes_list=recipes_in_category)
-    # else:
-    #     return "404"
 
 
 @app.route("/category/<string:category>/<string:recipe>")
 def view_recipe(category, recipe):
-    # file_name = str(category) + ".csv"
-    # category_exists = os.path.exists(file_name)
-    # if category_exists:
     all_recipes = load_recipe_file()
     for recipes in all_recipes:
         if recipes[0] == recipe:

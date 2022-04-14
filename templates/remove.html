@@ -5,6 +5,16 @@
     <title>Delete Recipe</title>
 </head>
 <body>
-
+<h1>Delete a recipe</h1>
+<form id="removal_form" action="" method="post">
+    <select id="recipe_select" name="recipe_select">
+        <option>Select a recipe to delete</option>
+{% for recipe in user_recipes  %}
+        <option value="{{ recipe[0] }}">{{ recipe[0] }}</option>
+{% endfor %}
+    </select>
+    <input type="button" id="remove_recipe" value="Delete">
+</form>
+<script src="/static/js/recipe_removal.js"></script>
 </body>
 </html>
