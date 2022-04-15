@@ -6,6 +6,7 @@ from flask_login import LoginManager, login_required, login_user, logout_user, c
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
+import uuid
 
 app = Flask(__name__)
 app.config['UPLOAD_PATH'] = 'static/images'
@@ -71,10 +72,15 @@ def index():
 
 @app.route("/user/<string:username>")
 def profile(username):
+    all_recipes = load_recipe_file()
+    recipes_by_user = []
+    for recipe in all_recipes:
+        if recipe[5] == username:
+            recipes_by_user.append(recipe)
     if current_user.is_authenticated and current_user.username == username:
-        return render_template("profile.html", username=username, my_profile=True)
+        return render_template("profile.html", username=username, my_profile=True, recipes_list=recipes_by_user)
     else:
-        return render_template("profile.html", username=username)
+        return render_template("profile.html", username=username, recipes_list=recipes_by_user)
 
 
 @app.route("/user/<string:username>/upload", methods=['GET', 'POST'])
@@ -82,8 +88,13 @@ def profile(username):
 def upload(username):
     if current_user.is_authenticated and current_user.username == username:
         if request.method == 'POST':
+            recipe_name_in_use = False
             image_file = request.files['image_upload']
             name = request.form['recipe_name']
+            all_recipes = load_recipe_file()
+            for recipes in all_recipes:
+                if recipes[0] == name:
+                    recipe_name_in_use = True
             category = request.form['recipe_category']
             serving_size = request.form['serving_size']
             ingredients = request.form['ingredients']
@@ -96,10 +107,15 @@ def upload(username):
             elif file_extension not in ALLOWED_FILE_EXTENSIONS:
                 flash("Image must be a png, jpg, or bmp file.")
                 return render_template("upload.html", username=username)
+            elif recipe_name_in_use:
+                flash("Recipe name is already in use!")
+                return render_template("upload.html", username=username)
             else:
-                image_file.save(os.path.join(app.config['UPLOAD_PATH'], secure_filename(image_file.filename)))
+                unique_id = uuid.uuid4()  # Used to prevent duplicate image names.
+                image_file.save(os.path.join(app.config['UPLOAD_PATH'], secure_filename(str(unique_id) +
+                                                                                        image_file.filename)))
                 recipe = [name, category, serving_size, ingredients, instructions, current_user.username,
-                          image_file.filename]
+                          str(unique_id) + image_file.filename]
                 add_recipe_file(recipe)
                 return redirect(url_for('profile', username=username))
         else:
@@ -118,13 +134,17 @@ def remove(username):
             for recipe in all_recipes:
                 if recipe[0] == recipe_to_remove:
                     remove_from_file(recipe)
+                    os.remove(os.path.join(app.config['UPLOAD_PATH'], recipe[6]))
             return redirect(url_for('profile', username=username))
         else:
             user_recipes = []
             for recipe in all_recipes:
                 if recipe[5] == current_user.username:
                     user_recipes.append(recipe)
-            return render_template("remove.html", user_recipes=user_recipes)
+            if len(user_recipes) == 0:
+                return "No recipes found"                                              # CHANGE TO REDIRECT TO PROFILE WITH ERROR MESSAGE
+            else:
+                return render_template("remove.html", user_recipes=user_recipes)
     else:
         return redirect(url_for('profile', username=username))
 
@@ -180,7 +200,7 @@ def recipe_list(category):
         if recipe[1] == category:
             recipes_in_category.append(recipe)
     if not recipes_in_category:
-        return "404"
+        return "No recipes uploaded in this category!"
     else:
         return render_template("category.html", category=category, recipes_list=recipes_in_category)
 
@@ -192,6 +212,4 @@ def view_recipe(category, recipe):
         if recipes[0] == recipe:
             return render_template("recipe.html", category=category, recipe=recipe, recipe_info=recipes)
     else:
-        return "404"
-
-# Display recipes on profile + check for recipe to display remove page
+        return "Recipe doesn't exist."

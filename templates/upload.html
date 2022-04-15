@@ -19,7 +19,7 @@
 <form id="recipe_form" action="" method="post" enctype=multipart/form-data>
     <label for="recipe_name">Recipe name:</label>
     <input type="text" name="recipe_name" id="recipe_name">
-    <span></span>
+    <span></span><br>
     <label for="recipe_category">Choose a category:</label>
     <select id="recipe_category" name="recipe_category">
         <option>Choose category</option>
@@ -28,19 +28,19 @@
         <option value="Salads">Salad</option>
         <option value="Desserts">Dessert</option>
     </select>
-    <span></span>
+    <span></span><br>
     <label for="image_upload">Image file: </label>
     <input type="file" name="image_upload" id="image_upload" accept=".bmp, .png, .jpg, .jpeg">
-    <span></span>
+    <span></span><br>
     <label for="serving_size">Serving size:</label>
     <input type="text" name="serving_size" id="serving_size">
-    <span></span>
+    <span></span><br>
     <label for="ingredients">Ingredients: </label>
     <textarea name="ingredients" id="ingredients"></textarea>
-    <span></span>
+    <span></span><br>
     <label for="instructions">Instructions: </label>
     <textarea name="instructions" id="instructions"></textarea>
-    <span></span>
+    <span></span><br>
     <input type="button" name="submit_recipe" id="submit_recipe" value="Submit">
 </form>
 <script src="/static/js/upload_verification.js"></script>

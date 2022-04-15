@@ -6,10 +6,18 @@
 </head>
 <body>
 <h2>{{ username }}'s recipe page.</h2>
+
 {% if my_profile %}
 <a href="{{ url_for('upload', username = username) }}">Upload Recipe</a>
 <a href="{{ url_for('remove', username = username) }}">Delete Recipe</a>
 {% else %}
+{% endif %}
+{% if recipes_list %}
+    {% for recipeData in recipes_list  %}
+    <ul><a href="{{ url_for('view_recipe', category = recipeData[1], recipe = recipeData[0] ) }}">{{ recipeData[0] }}</a></ul>
+    {% endfor %}
+{% else %}
+    {{ username }} has no recipes uploaded!
 {% endif %}
 </body>
 </html>
