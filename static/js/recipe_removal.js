@@ -3,9 +3,9 @@
 const $ = selector => document.querySelector(selector);
 
 function removeRecipe(){
-    let isValidOption = false;
+    let isValidOption;
 
-    if ($("#recipe_select").value === "Select a recipe to delete"){
+    if ($("#recipe_select").value === ""){
         $("#removal_form").nextElementSibling.textContent = "Must choose a category.";
         isValidOption = false;
     }else{

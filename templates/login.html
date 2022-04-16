@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
     <title>
         {% if mode == "login" %}
             Log In
@@ -9,8 +8,13 @@
             Create Account
         {% endif %}
     </title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/css/main.css">
 </head>
 <body>
+{% include "navbar.html" %}
 {% with messages = get_flashed_messages() %}
 {% if messages %}
 <ul class=flashes>
@@ -33,14 +37,14 @@
 <form id="user_account_form" action="" method="post">
     <label for="username">Username:</label>
     <input type="text" id="username" name="username">
-    <span></span>
+    <span></span><br>
     <label for="password">Password:</label>
     <input type ="password" id="password" name="password">
-    <span></span>
+    <span></span><br>
     {% if mode == "signup" %}
     <label for="password_2">Re-enter password:</label>
     <input type ="password" id="password_2" name="password_2">
-    <span></span>
+    <span></span><br>
     {% endif %}
     <input type="button" id="submit_account" name="submit_account" value="Submit">
 </form>

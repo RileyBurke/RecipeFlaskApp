@@ -65,7 +65,7 @@ def create_new_user(username, password):
 @app.route("/")
 def index():
     if current_user.is_authenticated:
-        return render_template("index.html", user=current_user.username)
+        return render_template("index.html", logged_user=current_user.username)
     else:
         return render_template("index.html")
 
@@ -130,21 +130,19 @@ def remove(username):
     if current_user.is_authenticated and current_user.username == username:
         all_recipes = load_recipe_file()
         if request.method == 'POST':
-            recipe_to_remove = request.form['recipe_select']
-            for recipe in all_recipes:
-                if recipe[0] == recipe_to_remove:
-                    remove_from_file(recipe)
-                    os.remove(os.path.join(app.config['UPLOAD_PATH'], recipe[6]))
+            recipes_to_remove = request.form.getlist('recipe_select')
+            for recipe_to_remove in recipes_to_remove:
+                for recipe in all_recipes:
+                    if recipe[0] == recipe_to_remove:
+                        remove_from_file(recipe)
+                        os.remove(os.path.join(app.config['UPLOAD_PATH'], recipe[6]))
             return redirect(url_for('profile', username=username))
         else:
             user_recipes = []
             for recipe in all_recipes:
                 if recipe[5] == current_user.username:
                     user_recipes.append(recipe)
-            if len(user_recipes) == 0:
-                return "No recipes found"                                              # CHANGE TO REDIRECT TO PROFILE WITH ERROR MESSAGE
-            else:
-                return render_template("remove.html", user_recipes=user_recipes)
+                return render_template("remove.html", user_recipes=user_recipes, username=username)
     else:
         return redirect(url_for('profile', username=username))
 
@@ -203,6 +201,7 @@ def recipe_list(category):
         return "No recipes uploaded in this category!"
     else:
         return render_template("category.html", category=category, recipes_list=recipes_in_category)
+
 
 
 @app.route("/category/<string:category>/<string:recipe>")
