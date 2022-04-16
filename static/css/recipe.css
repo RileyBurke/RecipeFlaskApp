@@ -1,0 +1,27 @@
+img{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 35%;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+#recipe_name{
+    text-align: center;
+    padding-top: 15px;
+}
+footer{
+    text-align: center;
+    padding-top: 30px;
+    padding-bottom: 10px;
+}
+#go_back{
+    padding-top: 20px;
+}
+#recipe_size{
+    text-decoration: underline;
+    text-underline: black;
+}
+#ingredients_list, #recipe_directions {
+    padding-top: 20px;
+}

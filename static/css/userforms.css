@@ -1,0 +1,21 @@
+h2{
+    padding-top: 10px;
+    margin-left: 50px;
+    padding-bottom: 50px;
+}
+label{
+    display: inline-block;
+    width: 150px;
+    padding-bottom: 5px;
+    text-align: right;
+}
+#user_account_form span{
+    color: red;
+}
+form span{
+    padding-left: 10px;
+}
+input[type=button]{
+    margin-top: 10px;
+    margin-left: 285px;
+}

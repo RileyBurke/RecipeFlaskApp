@@ -6,15 +6,17 @@ function removeRecipe(){
     let isValidOption;
 
     if ($("#recipe_select").value === ""){
-        $("#removal_form").nextElementSibling.textContent = "Must choose a category.";
+        $("#remove_recipe").nextElementSibling.textContent = "Must choose a recipe.";
         isValidOption = false;
     }else{
-        $("#removal_form").nextElementSibling.textContent = "";
+        $("#remove_recipe").nextElementSibling.textContent = "";
         isValidOption = true;
     }
 
     if (isValidOption){
-        $("#removal_form").submit();
+        if (confirm("Are you sure you want to delete these recipes?") === true){
+            $("#removal_form").submit();
+        }
     }
 }
 

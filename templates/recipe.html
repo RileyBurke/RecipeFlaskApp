@@ -6,14 +6,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/recipe.css">
 </head>
 <body>
 {% include "navbar.html" %}
-<img src="/static/images/{{ recipe_info[6] }}">
 <h1 id="recipe_name">{{ recipe_info[0] }}</h1>
-<h2 id="recipe_size">Serves {{ recipe_info[2] }}</h2>
-<p id="recipe_ingredients">{{ recipe_info[3] }}</p>
-<p id="recipe_directions">{{ recipe_info[4] }}</p>
-<footer>Recipe created by <a href="{{ url_for('profile', username = recipe_info[5] ) }}">{{ recipe_info[5] }}</a></footer>
+<img src="/static/images/{{ recipe_info[6] }}">
+<div class="container">
+<h3 id="recipe_size">Serves {{ recipe_info[2] }}</h3>
+    <p id="ingredients_list">Ingredients:
+    <ul>
+    {% for ingredient in ingredients  %}
+    <li>{{ ingredient }}</li>
+    {% endfor %}
+    </ul>
+    </p>
+<p id="recipe_directions">Directions: {{ recipe_info[4] }}</p>
+    <h4 id="go_back"><a href="{{ url_for('recipe_list', category=recipe_info[1] ) }}"><< Return to {{ category }}</a></h4>
+</div>
+<footer>Recipe created by <a href="{{ url_for('profile', username=recipe_info[5] ) }}">{{ recipe_info[5] }}</a></footer>
 </body>
 </html>

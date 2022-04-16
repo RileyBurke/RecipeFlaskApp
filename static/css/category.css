@@ -1,0 +1,20 @@
+h2{
+    padding-top: 10px;
+    margin-left: 50px;
+    padding-bottom: 50px;
+}
+table, tr, th, td{
+    border: 2px solid;
+}
+table{
+    width: 600px;
+    background: whitesmoke;
+}
+td{
+    padding: 10px;
+
+}
+th{
+    font-size: 25px;
+    padding: 10px;
+}

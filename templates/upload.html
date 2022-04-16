@@ -6,9 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/uploadoption.css">
 </head>
 <body>
 {% include "navbar.html" %}
+<h2>Upload a recipe</h2>
 {% with messages = get_flashed_messages() %}
 {% if messages %}
 <ul class=flashes>
@@ -16,10 +18,12 @@
     {{ message }}
     {% endfor %}
 </ul>
+<h2>Upload a recipe</h2>
 {% endif %}
 {% endwith %}
 {% block body %}
 {% endblock %}
+<div class="container">
 <form id="recipe_form" action="" method="post" enctype=multipart/form-data>
     <label for="recipe_name">Recipe name:</label>
     <input type="text" name="recipe_name" id="recipe_name">
@@ -40,13 +44,18 @@
     <input type="text" name="serving_size" id="serving_size">
     <span></span><br>
     <label for="ingredients">Ingredients: </label>
-    <textarea name="ingredients" id="ingredients"></textarea>
+    <textarea multiple name="ingredients" id="ingredients" cols="40" rows="12"
+              placeholder="Separate
+ingredients
+by
+line."></textarea>
     <span></span><br>
     <label for="instructions">Instructions: </label>
-    <textarea name="instructions" id="instructions"></textarea>
+    <textarea name="instructions" id="instructions" cols="80" rows="8"></textarea>
     <span></span><br>
     <input type="button" name="submit_recipe" id="submit_recipe" value="Submit">
 </form>
+</div>
 <script src="/static/js/upload_verification.js"></script>
 </body>
 </html>

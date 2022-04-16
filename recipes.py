@@ -8,6 +8,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 import uuid
 
+
+
 app = Flask(__name__)
 app.config['UPLOAD_PATH'] = 'static/images'
 app.secret_key = b'\x7f&\xd1\x8c^;\xc9\xe6\xd4g \x8bCp\x9b\x80\x9d\xb5>\x99u=0\x12'
@@ -15,7 +17,8 @@ app.debug = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 login_manager = LoginManager(app)
 login_manager.login_view = "users"
-login_manager.init_app(app)
+login_manager.init_app(app)\
+
 recipe_app_database = "recipesRB.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 database = SQLAlchemy(app)
@@ -51,9 +54,15 @@ def remove_from_file(recipe_to_remove:list):
             if recipe != recipe_to_remove:
                 writer.writerow(recipe)
 
+
 @login_manager.user_loader
 def load_user(id):
     return User.query.get(id)
+
+
+@login_manager.unauthorized_handler
+def unauthorized_user():
+    return redirect(url_for('index'))
 
 
 def create_new_user(username, password):
@@ -97,10 +106,10 @@ def upload(username):
                     recipe_name_in_use = True
             category = request.form['recipe_category']
             serving_size = request.form['serving_size']
-            ingredients = request.form['ingredients']
+            ingredients = request.form['ingredients'].split("\r\n")
             instructions = request.form['instructions']
             file_extension = image_file.filename.split(".")[-1]
-            if name == "" or category == "" or serving_size == "" or ingredients == "" or instructions == "" \
+            if name == "" or category == "" or serving_size == "" or len(ingredients) == 0 or instructions == "" \
                     or image_file.filename == "":
                 flash("All information must be filled.")
                 return render_template("upload.html", username=username)
@@ -142,7 +151,7 @@ def remove(username):
             for recipe in all_recipes:
                 if recipe[5] == current_user.username:
                     user_recipes.append(recipe)
-                return render_template("remove.html", user_recipes=user_recipes, username=username)
+            return render_template("remove.html", user_recipes=user_recipes, username=username)
     else:
         return redirect(url_for('profile', username=username))
 
@@ -152,7 +161,7 @@ def login():
     if current_user.is_authenticated:
         return redirect(url_for("index"))
     if request.method == "POST":
-        username = request.form['username']
+        username = request.form['username'].lower()
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
         if user is not None and check_password_hash(user.password, password):
@@ -177,10 +186,12 @@ def signup():
     if current_user.is_authenticated:
         return redirect(url_for("index"))
     if request.method == "POST":
-        username = request.form['username']
+        username = request.form['username'].lower()
         password = request.form['password']
         password_reentry = request.form['password_2']
-        if 16 >= len(username) >= 8 and 20 >= len(password) > 8 and password == password_reentry:
+        existing_user = User.query.filter_by(username=username).first()
+        if 16 >= len(username) >= 8 and 20 >= len(password) > 8 and password == password_reentry \
+                and existing_user is None:
             create_new_user(username, generate_password_hash(password))
             flash("User successfully created.")
             return redirect(url_for('login'))
@@ -209,6 +220,8 @@ def view_recipe(category, recipe):
     all_recipes = load_recipe_file()
     for recipes in all_recipes:
         if recipes[0] == recipe:
-            return render_template("recipe.html", category=category, recipe=recipe, recipe_info=recipes)
+            ingredients = recipes[3].replace('\'', '').replace('[', '').replace(']', '').split(',')
+            return render_template("recipe.html", category=category, recipe=recipe, recipe_info=recipes,
+                                   ingredients=ingredients)
     else:
         return "Recipe doesn't exist."

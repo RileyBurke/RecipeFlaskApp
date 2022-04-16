@@ -54,6 +54,7 @@ function submitRecipe() {
     }else{
         $("#ingredients").nextElementSibling.textContent = "";
         isValidIngredients = true;
+        $("#ingredients").value.replaceAll(",","").split("\n");
     }
 
     if ($("#instructions").value === "") {
