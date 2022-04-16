@@ -1,0 +1,22 @@
+.list-group-item{
+    width: 500px;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+#upload_options{
+    padding-right: 50px;
+    padding-left: 50px;
+    padding-bottom: 50px;
+    text-align: center;
+}
+#upload_options a{
+    padding-right: 25px;
+    padding-left: 25px;
+    font-size: 25px;
+}
+h2{
+    padding-top: 10px;
+    margin-left: 50px;
+    padding-bottom: 50px;
+}

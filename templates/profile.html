@@ -5,23 +5,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/css/profile.css">
     <link rel="stylesheet" href="/static/css/main.css">
 </head>
 <body>
 {% include "navbar.html" %}
 <h2>{{ username }}'s recipe page.</h2>
-
 {% if my_profile %}
+<div class="container" id="upload_options">
 <a href="{{ url_for('upload', username = username) }}">Upload a Recipe</a>
 <a href="{{ url_for('remove', username = username) }}">Delete Recipes</a>
+</div>
 {% else %}
 {% endif %}
+<div class="container">
+    <ul class="list-group-horizontal">
 {% if recipes_list %}
     {% for recipeData in recipes_list  %}
-    <ul><a href="{{ url_for('view_recipe', category = recipeData[1], recipe = recipeData[0] ) }}">{{ recipeData[0] }}</a></ul>
+    <li class="list-group-item"><a href="{{ url_for('view_recipe', category = recipeData[1], recipe = recipeData[0] ) }}">{{ recipeData[0] }}</a></li>
     {% endfor %}
 {% else %}
-    {{ username }} has no recipes uploaded!
+        <li class="list-group-item">{{ username }} has no recipes uploaded!</li>
 {% endif %}
+    </ul>
+</div>
 </body>
 </html>
