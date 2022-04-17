@@ -1,13 +1,11 @@
 import os
 import csv
-import sys
-from flask import Flask, render_template, request, redirect, url_for, Response, flash
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user, UserMixin
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 import uuid
-
 
 
 app = Flask(__name__)
@@ -46,7 +44,7 @@ def add_recipe_file(recipe: list):
         writer.writerow(recipe)
 
 
-def remove_from_file(recipe_to_remove:list):
+def remove_from_file(recipe_to_remove: list):
     all_recipes = load_recipe_file()
     with open("recipes.csv", "w", newline="") as recipe_file:
         writer = csv.writer(recipe_file)
@@ -73,23 +71,30 @@ def create_new_user(username, password):
 
 @app.route("/")
 def index():
+    error = request.args.get('error')
     if current_user.is_authenticated:
-        return render_template("index.html", logged_user=current_user.username)
+        return render_template("index.html", logged_user=current_user.username, error=error)
     else:
-        return render_template("index.html")
+        return render_template("index.html", error=error)
 
 
 @app.route("/user/<string:username>")
 def profile(username):
-    all_recipes = load_recipe_file()
-    recipes_by_user = []
-    for recipe in all_recipes:
-        if recipe[5] == username:
-            recipes_by_user.append(recipe)
-    if current_user.is_authenticated and current_user.username == username:
-        return render_template("profile.html", username=username, my_profile=True, recipes_list=recipes_by_user)
+    user = User.query.filter_by(username=username).first()
+    if user:
+        all_recipes = load_recipe_file()
+        recipes_by_user = []
+        for recipe in all_recipes:
+            if recipe[5] == username.lower():
+                recipes_by_user.append(recipe)
+        if current_user.is_authenticated and current_user.username == username.lower():
+            return render_template("profile.html", username=username.lower(), my_profile=True,
+                                   recipes_list=recipes_by_user)
+        else:
+            return render_template("profile.html", username=username.lower(), recipes_list=recipes_by_user)
     else:
-        return render_template("profile.html", username=username, recipes_list=recipes_by_user)
+        flash("User not found.")
+        return redirect(url_for('index', error=True))
 
 
 @app.route("/user/<string:username>/upload", methods=['GET', 'POST'])
@@ -102,23 +107,23 @@ def upload(username):
             name = request.form['recipe_name']
             all_recipes = load_recipe_file()
             for recipes in all_recipes:
-                if recipes[0] == name:
+                if recipes[0].lower() == name.lower():
                     recipe_name_in_use = True
             category = request.form['recipe_category']
             serving_size = request.form['serving_size']
-            ingredients = request.form['ingredients'].split("\r\n")
+            ingredients = request.form['ingredients'].split("\n")
             instructions = request.form['instructions']
             file_extension = image_file.filename.split(".")[-1]
             if name == "" or category == "" or serving_size == "" or len(ingredients) == 0 or instructions == "" \
                     or image_file.filename == "":
                 flash("All information must be filled.")
-                return render_template("upload.html", username=username)
+                return render_template("upload.html", username=username.lower(), error=True)
             elif file_extension not in ALLOWED_FILE_EXTENSIONS:
                 flash("Image must be a png, jpg, or bmp file.")
-                return render_template("upload.html", username=username)
+                return render_template("upload.html", username=username.lower(), error=True)
             elif recipe_name_in_use:
                 flash("Recipe name is already in use!")
-                return render_template("upload.html", username=username)
+                return render_template("upload.html", username=username.lower(), error=True)
             else:
                 unique_id = uuid.uuid4()  # Used to prevent duplicate image names.
                 image_file.save(os.path.join(app.config['UPLOAD_PATH'], secure_filename(str(unique_id) +
@@ -126,11 +131,11 @@ def upload(username):
                 recipe = [name, category, serving_size, ingredients, instructions, current_user.username,
                           str(unique_id) + image_file.filename]
                 add_recipe_file(recipe)
-                return redirect(url_for('profile', username=username))
+                return redirect(url_for('profile', username=username.lower()))
         else:
-            return render_template("upload.html", username=username)
+            return render_template("upload.html", username=username.lower())
     else:
-        return redirect(url_for('profile', username=username))
+        return redirect(url_for('profile', username=username.lower()))
 
 
 @app.route("/user/<string:username>/remove", methods=['GET', 'POST'])
@@ -145,7 +150,7 @@ def remove(username):
                     if recipe[0] == recipe_to_remove:
                         remove_from_file(recipe)
                         os.remove(os.path.join(app.config['UPLOAD_PATH'], recipe[6]))
-            return redirect(url_for('profile', username=username))
+            return redirect(url_for('profile', username=username.lower()))
         else:
             user_recipes = []
             for recipe in all_recipes:
@@ -153,7 +158,7 @@ def remove(username):
                     user_recipes.append(recipe)
             return render_template("remove.html", user_recipes=user_recipes, username=username)
     else:
-        return redirect(url_for('profile', username=username))
+        return redirect(url_for('profile', username=username.lower()))
 
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -169,7 +174,7 @@ def login():
             return redirect(url_for('index'))
         else:
             flash("Invalid username or password.")
-            return redirect(url_for('login'))
+            return redirect(url_for('login', error=True))
     else:
         return render_template("login.html", mode="login")
 
@@ -196,32 +201,40 @@ def signup():
             flash("User successfully created.")
             return redirect(url_for('login'))
         else:
-            return render_template("login.html", mode="signup", error="Username already exists.")
+            flash("Username already exists.")
+            return render_template("login.html", mode="signup", error=True)
     else:
         return render_template("login.html", mode="signup")
 
 
-@app.route("/category/<string:category>")
+@app.route("/category/<string:category>/")
 def recipe_list(category):
     all_recipes = load_recipe_file()
     recipes_in_category = []
     for recipe in all_recipes:
-        if recipe[1] == category:
+        if recipe[1].lower() == category.lower():
             recipes_in_category.append(recipe)
     if not recipes_in_category:
-        return "No recipes uploaded in this category!"
+        flash("Category does not exist.")
+        return redirect(url_for('index', error=True))
     else:
         return render_template("category.html", category=category, recipes_list=recipes_in_category)
 
 
-
-@app.route("/category/<string:category>/<string:recipe>")
+@app.route("/category/<string:category>/<string:recipe>/")
 def view_recipe(category, recipe):
     all_recipes = load_recipe_file()
     for recipes in all_recipes:
-        if recipes[0] == recipe:
+        if recipes[0].lower() == recipe.lower():
             ingredients = recipes[3].replace('\'', '').replace('[', '').replace(']', '').split(',')
             return render_template("recipe.html", category=category, recipe=recipe, recipe_info=recipes,
                                    ingredients=ingredients)
     else:
-        return "Recipe doesn't exist."
+        flash("Could not find specified recipe.")
+        return redirect(url_for('index', error=True))
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    flash("404 invalid URL.")
+    return redirect(url_for('index', error=True))

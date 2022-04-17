@@ -16,17 +16,6 @@
 </head>
 <body>
 {% include "navbar.html" %}
-{% with messages = get_flashed_messages() %}
-{% if messages %}
-<ul class=flashes>
-    {% for message in messages %}
-    {{ message }}
-    {% endfor %}
-</ul>
-{% endif %}
-{% endwith %}
-{% block body %}
-{% endblock %}
 <h2>
     {% if mode == "login" %}
         Log In
@@ -34,7 +23,6 @@
         Create Account
     {% endif %}
 </h2>
-<h3>{{ error }}</h3>
 <div class="container-fluid">
 <form id="user_account_form" action="" method="post">
     <label for="username">Username:</label>

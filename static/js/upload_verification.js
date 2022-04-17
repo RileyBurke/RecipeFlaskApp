@@ -14,13 +14,13 @@ function submitRecipe() {
     let fileExtension = $("#image_upload").value.split('.').pop();
 
     if($("#image_upload").value === ""){
-        $("#image_upload").nextElementSibling.textContent = "Must include an image file.";
+        $("#image_upload").previousElementSibling.textContent = "Must include an image file.";
         isValidFile = false;
     }else if (!(validExtensions.includes(fileExtension))){
-        $("#image_upload").nextElementSibling.textContent = "Invalid image file. Must use a jpg, png, or bmp file.";
+        $("#image_upload").previousElementSibling.textContent = "Invalid image file. Must use a jpg, png, or bmp file.";
         isValidFile = false;
     }else{
-        $("#image_upload").nextElementSibling.textContent = "";
+        $("#image_upload").previousElementSibling.textContent = "";
         isValidFile = true;
     }
 
@@ -48,13 +48,16 @@ function submitRecipe() {
         isValidSize = true;
     }
 
+    let ingredients;
     if ($("#ingredients").value === "") {
         $("#ingredients").nextElementSibling.textContent = "Must include a list of ingredients.";
         isValidIngredients = false;
     }else{
         $("#ingredients").nextElementSibling.textContent = "";
         isValidIngredients = true;
-        $("#ingredients").value.replaceAll(",","").split("\n");
+        ingredients = $("#ingredients").value.split("\n").filter( (elem) => {
+        return elem !== '' && elem !== ",";
+    });
     }
 
     if ($("#instructions").value === "") {
@@ -66,7 +69,14 @@ function submitRecipe() {
     }
 
     if (isValidFile && isValidName && isValidCategory && isValidSize && isValidIngredients && isValidInstructions){
-        $("#recipe_form").submit();
+        $("#ingredients").value = ingredients;
+        if ($("#ingredients").value != ""){
+            $("#recipe_form").submit();
+        }else{
+            $("#ingredients").value = "";
+            $("#ingredients").nextElementSibling.textContent = "Invalid ingredients list";
+        }
+
     }
 }
 

@@ -9,7 +9,10 @@ body{
 }
 body{
     margin-top: 80px;
-    font-family: "Trebuchet MS", serif;
+    font-family: "Lucida Handwriting", cursive;
     font-weight: bold;
 }
-
+.flashes{
+    width: 500px;
+    text-align: center;
+}
