@@ -11,18 +11,6 @@
 <body>
 {% include "navbar.html" %}
 <h2>Upload a recipe</h2>
-{% with messages = get_flashed_messages() %}
-{% if messages %}
-<ul class=flashes>
-    {% for message in messages %}
-    {{ message }}
-    {% endfor %}
-</ul>
-<h2>Upload a recipe</h2>
-{% endif %}
-{% endwith %}
-{% block body %}
-{% endblock %}
 <div class="container">
 <form id="recipe_form" action="" method="post" enctype=multipart/form-data>
     <label for="recipe_name">Recipe name:</label>
@@ -44,14 +32,14 @@
     <input type="text" name="serving_size" id="serving_size">
     <span></span><br>
     <label for="ingredients">Ingredients: </label>
-    <textarea multiple name="ingredients" id="ingredients" cols="40" rows="12"
+    <textarea multiple name="ingredients" id="ingredients" cols="50" rows="12"
               placeholder="Separate
 ingredients
 by
 line."></textarea>
     <span></span><br>
     <label for="instructions">Instructions: </label>
-    <textarea name="instructions" id="instructions" cols="60" rows="8"></textarea>
+    <textarea name="instructions" id="instructions" cols="60" rows="12"></textarea>
     <span></span><br>
     <input type="button" name="submit_recipe" id="submit_recipe" value="Submit">
 </form>

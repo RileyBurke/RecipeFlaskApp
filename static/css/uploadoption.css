@@ -32,3 +32,6 @@ input[type='button']{
     width: 400px;
     height:400px;
 }
+#recipe_category{
+    width: 200px;
+}

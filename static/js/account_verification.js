@@ -36,7 +36,9 @@ function userSubmission() {
         }
     }
 
-    if (validUsername && validPassword && passwordsMatch){
-        $("#user_account_form").submit();
+    if (validUsername && validPassword){
+        if ($("#password_2") !== null && passwordsMatch || $("#password_2") == null){
+            $("#user_account_form").submit();
+        }
     }
 }

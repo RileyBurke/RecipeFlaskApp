@@ -17,8 +17,7 @@ app.debug = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 login_manager = LoginManager(app)
 login_manager.login_view = "users"
-login_manager.init_app(app)\
-
+login_manager.init_app(app)
 recipe_app_database = "recipesRB.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 database = SQLAlchemy(app)
@@ -40,13 +39,13 @@ def load_recipe_file():
     return recipes
 
 
-def add_recipe_file(recipe: list):
+def add_recipe_file(recipe):
     with open("recipes.csv", "a", newline="") as recipe_file:
         writer = csv.writer(recipe_file)
         writer.writerow(recipe)
 
 
-def remove_from_file(recipe_to_remove: list):
+def remove_from_file(recipe_to_remove):
     all_recipes = load_recipe_file()
     with open("recipes.csv", "w", newline="") as recipe_file:
         writer = csv.writer(recipe_file)
@@ -259,3 +258,8 @@ def view_recipe(category, recipe):
 def page_not_found(e):
     flash("404 invalid URL.")
     return redirect(url_for('index', error=True))
+
+#
+# if __name__ == "__main__":
+#     app.run(host="0.0.0.0", port=80)
+#  For use with AWS
