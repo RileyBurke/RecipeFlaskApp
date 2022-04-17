@@ -7,35 +7,36 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function userSubmission() {
-    let validUsername, validPassword;
+    let validUsername, validPassword, passwordsMatch;
 
-    if ($("#password").value.length > 20 || $("#password").value.length < 8){
-        $("#password").nextElementSibling.textContent = "Passwords must be between 8 and 20 characters long.";
+    if ($("#username").value.length > 16 || $("#username").value.length < 8  || $("#username").value === ""){
+            $("#username").nextElementSibling.textContent = "Username must be between 8 and 16 characters long.";
+            validUsername = false;
+        }else{
+            $("#username").nextElementSibling.textContent = "";
+            validUsername = true;
+        }
+
+    if ($("#password_1").value.length > 20 || $("#password_1").value.length < 8 ||
+        $("#password_1").value === ""){
+        $("#password_1").nextElementSibling.textContent = "Passwords must be between 8 and 20 characters long.";
         validPassword = false;
     }else {
-        $("#password").nextElementSibling.textContent = "";
+        $("#password_1").nextElementSibling.textContent = "";
         validPassword = true;
     }
 
     if ($("#password_2") !== null){
-        if ($("#password").value !== $("#password_2").value) {
+        if ($("#password_1").value !== $("#password_2").value) {
             $("#password_2").nextElementSibling.textContent = "Passwords must match.";
-            validPassword = false;
+            passwordsMatch = false;
         }else{
-            $("#password").nextElementSibling.textContent = "";
-            validPassword = true;
+            $("#password_2").nextElementSibling.textContent = "";
+            passwordsMatch = true;
         }
     }
 
-    if ($("#username").value.length > 16 || $("#username").value.length < 8){
-        $("#username").nextElementSibling.textContent = "Username must be between 8 and 16 characters long.";
-        validUsername = false;
-    }else{
-        $("#username").nextElementSibling.textContent = "";
-        validUsername = true;
-    }
-
-    if (validUsername && validPassword){
+    if (validUsername && validPassword && passwordsMatch){
         $("#user_account_form").submit();
     }
 }

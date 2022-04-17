@@ -1,5 +1,7 @@
 import os
 import csv
+import random
+
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user, UserMixin
 from werkzeug.utils import secure_filename
@@ -69,9 +71,21 @@ def create_new_user(username, password):
     database.session.commit()
 
 
+def get_random_recipe():
+    all_recipes = load_recipe_file()
+    recipe = all_recipes[random.randint(0, len(all_recipes) - 1)]
+    return recipe
+
+
 @app.route("/")
 def index():
     error = request.args.get('error')
+    random_recipe = request.args.get('random_recipe')
+    if random_recipe == "Random Recipe":
+        recipe = get_random_recipe()
+        ingredients = recipe[3].replace('\'', '').replace('[', '').replace(']', '').split(',')
+        return render_template("recipe.html", category=recipe[1], recipe=recipe[0], recipe_info=recipe,
+                               ingredients=ingredients)
     if current_user.is_authenticated:
         return render_template("index.html", logged_user=current_user.username, error=error)
     else:
@@ -167,7 +181,7 @@ def login():
         return redirect(url_for("index"))
     if request.method == "POST":
         username = request.form['username'].lower()
-        password = request.form['password']
+        password = request.form['password_1']
         user = User.query.filter_by(username=username).first()
         if user is not None and check_password_hash(user.password, password):
             login_user(user)
@@ -192,16 +206,23 @@ def signup():
         return redirect(url_for("index"))
     if request.method == "POST":
         username = request.form['username'].lower()
-        password = request.form['password']
+        password = request.form['password_1']
         password_reentry = request.form['password_2']
         existing_user = User.query.filter_by(username=username).first()
-        if 16 >= len(username) >= 8 and 20 >= len(password) > 8 and password == password_reentry \
+        if 16 >= len(username) >= 8 and 20 >= len(password) >= 8 and password == password_reentry \
                 and existing_user is None:
             create_new_user(username, generate_password_hash(password))
             flash("User successfully created.")
             return redirect(url_for('login'))
         else:
-            flash("Username already exists.")
+            if 16 < len(username) or len(username) < 8:
+                flash("Username must be 8 to 16 characters.")
+            if 20 < len(password) or len(password) < 8:
+                flash("Password must be 8 to 20 characters.")
+            if password != password_reentry:
+                flash("Passwords must match.")
+            if existing_user is not None:
+                flash("Username already exists.")
             return render_template("login.html", mode="signup", error=True)
     else:
         return render_template("login.html", mode="signup")

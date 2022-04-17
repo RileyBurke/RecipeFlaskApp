@@ -16,3 +16,11 @@ body{
     width: 500px;
     text-align: center;
 }
+#random_recipe{
+    margin-left: 30px;
+    margin-top: 10px;
+    width: 180px;
+}
+form{
+    height: 0px;
+}

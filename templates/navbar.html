@@ -6,6 +6,9 @@
     <ul class="nav navbar-nav fixed-top">
       <li class="active"><a href="{{ url_for('index') }}">Home</a></li>
     </ul>
+    <form action="{{ url_for('index') }}">
+    <input type="submit" id="random_recipe" name="random_recipe" value="Random Recipe">
+    </form>
     <ul class="nav navbar-nav navbar-right">
         {% if current_user.is_authenticated %}
          <li><a href="{{ url_for('profile', username=current_user.username) }}"><span class="glyphicon glyphicon-user"></span>{{ current_user.username }}</a></li>
