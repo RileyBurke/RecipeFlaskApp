@@ -259,7 +259,7 @@ def page_not_found(e):
     flash("404 invalid URL.")
     return redirect(url_for('index', error=True))
 
-#
-# if __name__ == "__main__":
-#     app.run(host="0.0.0.0", port=80)
-#  For use with AWS
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
+#  Change to port 80 for AWS
